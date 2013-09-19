@@ -1,11 +1,34 @@
 ﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 class Mandelbrot : Form
 {
+    PictureBox pictureBox1 = new PictureBox();
+
     public Mandelbrot()
     {
+        int width = 300;
+        int height = 300;
+
+        pictureBox1.Size = new Size(width, height);
+        this.Controls.Add(pictureBox1);
+
+        Bitmap mandelbrot = new Bitmap(width, height);
+
+        for (int x = 1; x < width; x++)
+        {
+            for (int y = 1; y < height; y++)
+            {
+                int n = CalculateMandelNumber(x, y);
+                mandelbrot.SetPixel(x, y, (n%2 == 0) ? Color.White : Color.Black);
+            }
+        }
+
+        pictureBox1.Image = mandelbrot;
+
+
         int l = CalculateMandelNumber(0.5, 0.8);
         Console.WriteLine(l.ToString());
     }
@@ -20,6 +43,12 @@ class Mandelbrot : Form
 
         while (DistanceToOrigin(a, b) < 2.0)
         {
+            if (result == 100)
+            {
+                result = 0;
+                break;
+            }
+
             ra = a * a - b * b + x;
             rb = 2 * a * b + y;
             a = ra;
