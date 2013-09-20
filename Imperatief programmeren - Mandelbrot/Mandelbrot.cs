@@ -5,52 +5,53 @@ using System.Windows.Forms;
 
 class Mandelbrot : Form
 {
-    PictureBox pictureBox1 = new PictureBox();
-
     public Mandelbrot()
     {
-        int width = 300;
-        int height = 300;
+        const int width = 300;
+        const int height = 300;
+        int n;
+        double scale;
+        Bitmap mandelbrot;
+        PictureBox pictureBox;
 
-        pictureBox1.Size = new Size(width, height);
-        this.Controls.Add(pictureBox1);
+        mandelbrot = new Bitmap(width, height);
+        pictureBox = new PictureBox();
+        pictureBox.Size = new Size(width, height);
+        pictureBox.Image = mandelbrot;
+        scale = 0.004;
 
-        Bitmap mandelbrot = new Bitmap(width, height);
-
-        for (int x = 1; x < width; x++)
+        // For every x and y run the mandelbrot calculation
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 1; y < height; y++)
+            for (int y = 0; y < height; y++)
             {
-                int n = CalculateMandelNumber(x, y);
-                mandelbrot.SetPixel(x, y, (n%2 == 0) ? Color.White : Color.Black);
+                n = CalculateMandelNumber(x * scale, y * scale);
+                mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
             }
         }
 
-        pictureBox1.Image = mandelbrot;
-
-
-        int l = CalculateMandelNumber(0.5, 0.8);
-        Console.WriteLine(l.ToString());
+        this.Controls.Add(pictureBox);
     }
 
-    private int CalculateMandelNumber(double x, double y)
+    private static int CalculateMandelNumber(double x, double y)
     {
         double a, b, ra, rb;
         int result;
-        a      = 0;
-        b      = 0;
+        a = 0;
+        b = 0;
         result = 0;
 
         while (DistanceToOrigin(a, b) < 2.0)
         {
             if (result == 100)
             {
-                result = 0;
                 break;
             }
 
+            // The Mandelbrot algorithm
             ra = a * a - b * b + x;
             rb = 2 * a * b + y;
+
             a = ra;
             b = rb;
             result++;
@@ -59,14 +60,13 @@ class Mandelbrot : Form
         return result;
     }
 
-    private double DistanceToOrigin(double a, double b)
+    private static double DistanceToOrigin(double x, double y)
     {
-        double result;
-        result = Math.Sqrt(a * a + b * b);
-        return result;
+        // Calculate the shortest distance from point (x, y) to point (0, 0) using Pythagoras
+        return Math.Sqrt(x * x + y * y);
     }
 
-    static void Main()
+    public static void Main()
     {
         Application.Run(new Mandelbrot());
     }
