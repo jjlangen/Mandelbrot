@@ -35,8 +35,8 @@ namespace Mandelbrot
         {
             int n;
 
-            this.leftTopX = centerX - (pictureBox1.Width / 2 * scale);
-            this.leftTopY = centerY - (pictureBox1.Height / 2 * scale);
+            this.leftTopX = centerX - (pictureBox1.Width / 2 * this.scale);
+            this.leftTopY = centerY - (pictureBox1.Height / 2 * this.scale);
 
             // For every x and y run the mandelbrot calculation
             for (int x = 0; x < pictureBox1.Width; x++)
@@ -44,8 +44,18 @@ namespace Mandelbrot
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
                     n = CalculateMandelNumber(this.leftTopX + x * this.scale, this.leftTopY + y * this.scale);
-                    mandelbrot.SetPixel(x, y, (n % 2 == 0) ? 
-                        Color.White : Color.Black);
+                    //mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
+                    if (n % 5 == 0)
+                        mandelbrot.SetPixel(x, y, Color.White);
+                    else if (n % 5 == 1)
+                        mandelbrot.SetPixel(x, y, Color.LightBlue);
+                    else if (n % 5 == 2)
+                        mandelbrot.SetPixel(x, y, Color.Blue);
+                    else if (n % 5 == 3)
+                        mandelbrot.SetPixel(x, y, Color.DarkBlue);
+                    else if (n % 5 == 4)
+                        mandelbrot.SetPixel(x, y, Color.Black);
+                    
                 }
             }
 
@@ -112,6 +122,43 @@ namespace Mandelbrot
             DrawMandelbrot();
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int selectedIndex = comboBox1.SelectedIndex;
+
+            if (selectedIndex == 0)
+            {
+                this.centerX = 0;
+                this.centerY = 0;
+                this.scale = 0.01;
+                this.max = 200;
+            }
+            else if (selectedIndex == 1)
+            {
+                this.centerX = 0.3634638671875;
+                this.centerY = -0.589392578125;
+                this.scale = 1.708984375E-06;
+                this.max = 300;
+            }
+            else if (selectedIndex == 2)
+            {
+                this.centerX = -1.76391357421875;
+                this.centerY = 0.0282250976562505;
+                this.scale = 2.44140625E-06;
+                this.max = 400;
+            }
+            else if (selectedIndex == 3)
+            {
+                this.centerX = -1.26814331054687;
+                this.centerY = 0.414217453002929;
+                this.scale = 1.52587890625E-07;
+                this.max = 250;
+            }
+
+            SetFormValues();
+            DrawMandelbrot();
+        }
+
         private void GetFormValues()
         {
             this.centerX = Convert.ToDouble(textBox1.Text);
@@ -128,36 +175,7 @@ namespace Mandelbrot
             textBox4.Text = this.max.ToString();
         }
 
-        private void SetFormValues(double centerX, double centerY, double scale)
-        {
-            textBox1.Text = centerX.ToString();
-            textBox2.Text = centerY.ToString();
-            textBox3.Text = scale.ToString();
-            textBox4.Text = max.ToString();
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-           int selectedIndex = comboBox1.SelectedIndex;
-           if (selectedIndex == 0)
-           {
-               SetFormValues(-0.2, 0, 0.006);
-           }
-           else if (selectedIndex == 1)
-           {
-               SetFormValues(0.3634638671875, -0.589392578125, 1.708984375E-06);
-           }
-           else if (selectedIndex == 2)
-           {
-               SetFormValues(-1.76391357421875, 0.0282250976562505, 2.44140625E-06);
-           }
-           else if (selectedIndex == 3)
-           {
-               SetFormValues(-0.74984375, 0.0048437499999997, 0.000625);
-           }
-           GetFormValues();
-           DrawMandelbrot();
-        }
+        
 
         
     }
