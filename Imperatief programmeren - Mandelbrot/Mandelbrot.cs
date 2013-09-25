@@ -2,6 +2,15 @@
 using System.Drawing;
 using System.Windows.Forms;
 
+// needed for circumventing XP - SAPI interaction bug 
+using System.Threading;
+
+// additionally needed libraries
+using System.Speech.Synthesis;
+using System.Speech.Recognition;
+using System.Net;
+using System.IO;
+
 namespace Mandelbrot
 {
     public partial class Mandelbrot : Form
@@ -17,10 +26,14 @@ namespace Mandelbrot
         double leftTopX;
         double leftTopY;
 
+        SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
+        SpeechSynthesizer synthesizer = new SpeechSynthesizer();
+
         // Constructor
         public Mandelbrot() 
         {
-            InitializeComponent();
+            InitializeComponent(); 
+            SpeechRecognition();
             
             mandelbrot = new Bitmap(pictureBox1.Width, pictureBox1.Height);
 
@@ -28,6 +41,43 @@ namespace Mandelbrot
             DrawMandelbrot();
 
             pictureBox1.MouseClick += new MouseEventHandler(Zoom);
+        }
+
+        private void SpeechRecognition()
+        {
+            string[] words = new string[] { "zoom in", "zoom out" };
+            // start new thread to control for XP - SAPI bug
+            Thread t1 = new Thread(delegate()
+            {
+                // call methods of SpeechRecognitionEngine object here
+                foreach (string s in words)
+                {
+                    recognitionEngine.RequestRecognizerUpdate();
+                    recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(s)));
+                }
+                recognitionEngine.SpeechRecognized += recognitionEngine_SpeechRecognized;
+                recognitionEngine.SetInputToDefaultAudioDevice();
+                recognitionEngine.RecognizeAsync(RecognizeMode.Multiple);
+            });
+
+            // set right state for thread and start
+            t1.SetApartmentState(ApartmentState.MTA);
+            t1.Start();
+        }
+
+        void recognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            String word = e.Result.Text;
+            if (e.Result.Text == "zoom in")
+            {
+                this.scale = this.scale / 2;
+                DrawMandelbrot();
+            }
+            else if (e.Result.Text == "zoom out")
+            {
+                this.scale = this.scale * 2;
+               DrawMandelbrot();
+            }
         }
 
         // Calculate and draw the mandelbrot figure
@@ -44,18 +94,9 @@ namespace Mandelbrot
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
                     n = CalculateMandelNumber(this.leftTopX + x * this.scale, this.leftTopY + y * this.scale);
-                    //mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
-                    if (n % 5 == 0)
-                        mandelbrot.SetPixel(x, y, Color.White);
-                    else if (n % 5 == 1)
-                        mandelbrot.SetPixel(x, y, Color.LightBlue);
-                    else if (n % 5 == 2)
-                        mandelbrot.SetPixel(x, y, Color.Blue);
-                    else if (n % 5 == 3)
-                        mandelbrot.SetPixel(x, y, Color.DarkBlue);
-                    else if (n % 5 == 4)
-                        mandelbrot.SetPixel(x, y, Color.Black);
-                    
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(0, 0, 250/((n%5)+1)));
+                    //mandelbrot.SetPixel(x, y, Color.FromArgb(0, 250/((n%5)+1), 0));
+                    //mandelbrot.SetPixel(x, y, Color.FromArgb(250/((n%5)+1), 0, 0));
                 }
             }
 
