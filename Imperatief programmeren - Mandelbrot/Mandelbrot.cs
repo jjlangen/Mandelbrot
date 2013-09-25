@@ -25,12 +25,18 @@ namespace Mandelbrot
             double scale;
             scale = 0.004;
 
+            double CenterX = Convert.ToDouble(textBox1.Text);
+            double CenterY = Convert.ToDouble(textBox2.Text);
+
+            double LeftTopX = CenterX - (pictureBox1.Width / 2 * scale);
+            double LeftTopY = CenterY - (pictureBox1.Height / 2 * scale);
+
             // For every x and y run the mandelbrot calculation
             for (int x = 0; x < pictureBox1.Width; x++)
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    n = CalculateMandelNumber(x * scale, y * scale);
+                    n = CalculateMandelNumber(LeftTopX + x * scale, LeftTopY + y * scale);
                     mandelbrot.SetPixel(x, y, (n % 2 == 0) ? 
                         Color.White : Color.Black);
                 }
@@ -73,6 +79,11 @@ namespace Mandelbrot
         private static double DistanceToOrigin(double x, double y)
         {
             return Math.Sqrt(x * x + y * y);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DrawMandelbrot();
         }
     }
 }
