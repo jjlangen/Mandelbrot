@@ -8,7 +8,7 @@
     <ProjectGuid>{695B9159-882E-4BC4-A6EC-095132FBA183}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Imperatief_programmeren___Mandelbrot</RootNamespace>
+    <RootNamespace>Mandelbrot</RootNamespace>
     <AssemblyName>Imperatief programmeren - Mandelbrot</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -33,14 +33,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Compile Include="Mandelbrot.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mandelbrot.Designer.cs">
+      <DependentUpon>Mandelbrot.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mandelbrot.resx">
+      <DependentUpon>Mandelbrot.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
