@@ -84,6 +84,7 @@ namespace Mandelbrot
         private void DrawMandelbrot()
         {
             int n;
+            int selectedIndex = comboBox2.SelectedIndex;
 
             this.leftTopX = centerX - (pictureBox1.Width / 2 * this.scale);
             this.leftTopY = centerY - (pictureBox1.Height / 2 * this.scale);
@@ -94,9 +95,22 @@ namespace Mandelbrot
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
                     n = CalculateMandelNumber(this.leftTopX + x * this.scale, this.leftTopY + y * this.scale);
-                    mandelbrot.SetPixel(x, y, Color.FromArgb(0, 0, 250/((n%5)+1)));
-                    //mandelbrot.SetPixel(x, y, Color.FromArgb(0, 250/((n%5)+1), 0));
-                    //mandelbrot.SetPixel(x, y, Color.FromArgb(250/((n%5)+1), 0, 0));
+                    if (selectedIndex == 0)
+                    {
+                        mandelbrot.SetPixel(x, y, Color.FromArgb(255 / ((n % 3) + 1), 255 / ((n % 3) + 1), 255)); 
+                    }
+                    else if (selectedIndex == 1)
+                    {
+                        mandelbrot.SetPixel(x, y, Color.FromArgb(250, n % 2 * 255, 250 / ((n % 5) + 1)));
+                    }
+                    else if (selectedIndex == 2)
+                    {
+                        mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255 / ((n % 4) + 1), 0));
+                    }
+                    else if (selectedIndex == 3)
+                    {
+                        mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
+                    }
                 }
             }
 
@@ -179,7 +193,7 @@ namespace Mandelbrot
                 this.centerX = 0.3634638671875;
                 this.centerY = -0.589392578125;
                 this.scale = 1.708984375E-06;
-                this.max = 300;
+                this.max = 295;
             }
             else if (selectedIndex == 2)
             {
@@ -214,6 +228,11 @@ namespace Mandelbrot
             textBox2.Text = this.centerY.ToString();
             textBox3.Text = this.scale.ToString();
             textBox4.Text = this.max.ToString();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DrawMandelbrot();
         }
 
         
