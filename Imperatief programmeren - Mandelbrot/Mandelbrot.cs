@@ -1,51 +1,35 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-
-// needed for circumventing XP - SAPI interaction bug 
-using System.Threading;
-using System.Reflection;
-
-// additionally needed libraries
-using System.Speech.Synthesis;
 using System.Speech.Recognition;
-using System.Net;
-using System.IO;
 
 namespace Mandelbrot
 {
     public partial class Mandelbrot : Form
     {
-        // Declaration of the globals
-        Bitmap mandelbrot;
 
-        double centerX;
-        double centerY;
+        // Declaration of the globals
+        Bitmap mandelbrot = new Bitmap(375, 406);
+        double centerX,  centerY;
+        double leftTopX, leftTopY;
         double scale;
         int max;
 
-        double leftTopX;
-        double leftTopY;
-
-        SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
-        SpeechSynthesizer synthesizer = new SpeechSynthesizer();
-
-        // Constructor
-        public Mandelbrot() 
+        // Class Constructor
+        public Mandelbrot()
         {
-            InitializeComponent(); 
-            SpeechRecognition();
-            
-            mandelbrot = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-
+            InitializeComponent();
+            InitializeSpeechRecognition();
             GetFormValues();
             DrawMandelbrot();
 
-            pictureBox1.MouseClick += new MouseEventHandler(Zoom);
+            pictureBox1.MouseClick += Zoom;
         }
 
-        private void SpeechRecognition()
+        // Speech based commands
+        private void InitializeSpeechRecognition()
         {
+            SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
             string[] words = new string[] { "left", "right", "top", "bottom", "zoom in", "zoom out" };
             
             foreach (string s in words)
@@ -57,39 +41,6 @@ namespace Mandelbrot
             recognitionEngine.SpeechRecognized += recognitionEngine_SpeechRecognized;
             recognitionEngine.SetInputToDefaultAudioDevice();
             recognitionEngine.RecognizeAsync(RecognizeMode.Multiple);
-        }
-
-        void recognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
-        {
-            textBox5.Text = e.Result.Text;
-
-            if (e.Result.Text == "left")
-            {
-                centerX = centerX - (125 * scale);
-            }
-            else if (e.Result.Text == "right")
-            {
-                centerX = centerX + (125 * scale);
-            }
-            if (e.Result.Text == "top")
-            {
-                centerY = centerY - (125 * scale);
-            }
-            else if (e.Result.Text == "bottom")
-            {
-                centerY = centerY + (125 * scale);
-            }
-            else if (e.Result.Text == "zoom in")
-            {
-                scale = scale / 2;
-            }
-            else if (e.Result.Text == "zoom out")
-            {
-                scale = scale * 2;
-            }
-
-            SetFormValues();
-            DrawMandelbrot();
         }
 
         // Calculate and draw the mandelbrot figure
@@ -198,16 +149,66 @@ namespace Mandelbrot
             return Math.Sqrt(x * x + y * y);
         }
 
-        private void Zoom(object sender, MouseEventArgs e)
+        private void GetFormValues()
         {
-            this.centerX = this.leftTopX + e.X * this.scale;
-            this.centerY = this.leftTopY + e.Y * this.scale;
+            this.centerX = Convert.ToDouble(textBox1.Text);
+            this.centerY = Convert.ToDouble(textBox2.Text);
+            this.scale = Convert.ToDouble(textBox3.Text);
+            this.max = Convert.ToInt32(textBox4.Text);
+        }
 
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+        private void SetFormValues()
+        {
+            textBox1.Text = this.centerX.ToString();
+            textBox2.Text = this.centerY.ToString();
+            textBox3.Text = this.scale.ToString();
+            textBox4.Text = this.max.ToString();
+        }
+
+        private void ChangeSettings(double centerX, double centerY, double scale, int max)
+        {
+            this.centerX = centerX;
+            this.centerY = centerY;
+            this.scale = scale;
+            this.max = max;
+        }
+
+        #region EventHandlers
+
+        // Speech recognition for the commands
+        private void recognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs srea)
+        {
+            string command = srea.Result.Text;
+
+            if (command == "left")
+                centerX -= (125 * scale);
+            else if (command == "right")
+                centerX += (125 * scale);
+            else if (command == "top")
+                centerY -= (125 * scale);
+            else if (command == "bottom")
+                centerY += (125 * scale);
+            else if (command == "zoom in")
+                scale /= 2;
+            else if (command == "zoom out")
+                scale *= 2;
+
+            textBox5.Text = srea.Result.Text;
+            SetFormValues();
+            DrawMandelbrot();
+        }
+
+
+        private void Zoom(object sender, MouseEventArgs mea)
+        {
+            this.centerX = this.leftTopX + mea.X * this.scale;
+            this.centerY = this.leftTopY + mea.Y * this.scale;
+
+            if (mea.Button == MouseButtons.Left)
             {
                 this.scale = this.scale / 2;
             }
-            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            else if (mea.Button == MouseButtons.Right)
             {
                 this.scale = this.scale * 2;
             }
@@ -227,52 +228,16 @@ namespace Mandelbrot
             int selectedIndex = comboBox1.SelectedIndex;
 
             if (selectedIndex == 0)
-            {
-                this.centerX = 0;
-                this.centerY = 0;
-                this.scale = 0.01;
-                this.max = 200;
-            }
+                ChangeSettings(0, 0, 0.01, 200);
             else if (selectedIndex == 1)
-            {
-                this.centerX = 0.3634638671875;
-                this.centerY = -0.589392578125;
-                this.scale = 1.708984375E-06;
-                this.max = 295;
-            }
+                ChangeSettings(0.3634638671875, -0.589392578125, 1.708984375E-06, 295);
             else if (selectedIndex == 2)
-            {
-                this.centerX = -1.76391357421875;
-                this.centerY = 0.0282250976562505;
-                this.scale = 2.44140625E-06;
-                this.max = 400;
-            }
+                ChangeSettings(-1.76391357421875, 0.0282250976562505, 2.44140625E-06, 400);
             else if (selectedIndex == 3)
-            {
-                this.centerX = -1.26814331054687;
-                this.centerY = 0.414217453002929;
-                this.scale = 1.52587890625E-07;
-                this.max = 250;
-            }
+                ChangeSettings(-1.26814331054687, 0.414217453002929, 1.52587890625E-07, 250);
 
             SetFormValues();
             DrawMandelbrot();
-        }
-
-        private void GetFormValues()
-        {
-            this.centerX = Convert.ToDouble(textBox1.Text);
-            this.centerY = Convert.ToDouble(textBox2.Text);
-            this.scale = Convert.ToDouble(textBox3.Text);
-            this.max = Convert.ToInt32(textBox4.Text);
-        }
-
-        private void SetFormValues()
-        {
-            textBox1.Text = this.centerX.ToString();
-            textBox2.Text = this.centerY.ToString();
-            textBox3.Text = this.scale.ToString();
-            textBox4.Text = this.max.ToString();
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -280,8 +245,6 @@ namespace Mandelbrot
             DrawMandelbrot();
         }
 
-        
-
-        
+        #endregion
     }
 }
