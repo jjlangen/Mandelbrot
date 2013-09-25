@@ -8,37 +8,26 @@ namespace Mandelbrot
     {
         // Declaration of the globals
         Bitmap mandelbrot;
-        double CenterX;
-        double CenterY;
+
+        double centerX;
+        double centerY;
         double scale;
-        double LeftTopX;
-        double LeftTopY;
         int max;
+
+        double leftTopX;
+        double leftTopY;
 
         // Constructor
         public Mandelbrot() 
         {
             InitializeComponent();
-
-            mandelbrot = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            DrawMandelbrot();
-            pictureBox1.MouseClick += new MouseEventHandler(Zoom);
-        }
-
-        private void Zoom(object sender, MouseEventArgs e)
-        {
-            textBox1.Text = (this.LeftTopX + e.X * this.scale).ToString();
-            textBox2.Text = (this.LeftTopY + e.Y * this.scale).ToString();
             
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                textBox3.Text = (this.scale / 2).ToString();
-            }
-            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                textBox3.Text = (this.scale * 2).ToString();
-            }
+            mandelbrot = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+
+            GetFormValues();
             DrawMandelbrot();
+
+            pictureBox1.MouseClick += new MouseEventHandler(Zoom);
         }
 
         // Calculate and draw the mandelbrot figure
@@ -46,19 +35,15 @@ namespace Mandelbrot
         {
             int n;
 
-            this.CenterX = Convert.ToDouble(textBox1.Text);
-            this.CenterY = Convert.ToDouble(textBox2.Text);
-            this.scale = Convert.ToDouble(textBox3.Text);
-            this.LeftTopX = CenterX - (pictureBox1.Width / 2 * scale);
-            this.LeftTopY = CenterY - (pictureBox1.Height / 2 * scale);
-            this.max = Convert.ToInt32(textBox4.Text);
+            this.leftTopX = centerX - (pictureBox1.Width / 2 * scale);
+            this.leftTopY = centerY - (pictureBox1.Height / 2 * scale);
 
             // For every x and y run the mandelbrot calculation
             for (int x = 0; x < pictureBox1.Width; x++)
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    n = CalculateMandelNumber(this.LeftTopX + x * this.scale, this.LeftTopY + y * this.scale);
+                    n = CalculateMandelNumber(this.leftTopX + x * this.scale, this.leftTopY + y * this.scale);
                     mandelbrot.SetPixel(x, y, (n % 2 == 0) ? 
                         Color.White : Color.Black);
                 }
@@ -103,9 +88,46 @@ namespace Mandelbrot
             return Math.Sqrt(x * x + y * y);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Zoom(object sender, MouseEventArgs e)
         {
+            this.centerX = this.leftTopX + e.X * this.scale;
+            this.centerY = this.leftTopY + e.Y * this.scale;
+
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                this.scale = this.scale / 2;
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                this.scale = this.scale * 2;
+            }
+
+            SetFormValues();
             DrawMandelbrot();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            GetFormValues();
+            DrawMandelbrot();
+        }
+
+        private void GetFormValues()
+        {
+            this.centerX = Convert.ToDouble(textBox1.Text);
+            this.centerY = Convert.ToDouble(textBox2.Text);
+            this.scale = Convert.ToDouble(textBox3.Text);
+            this.max = Convert.ToInt32(textBox4.Text);
+        }
+
+        private void SetFormValues()
+        {
+            textBox1.Text = this.centerX.ToString();
+            textBox2.Text = this.centerY.ToString();
+            textBox3.Text = this.scale.ToString();
+            textBox4.Text = this.max.ToString();
+        }
+
+        
     }
 }
