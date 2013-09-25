@@ -111,6 +111,39 @@ namespace Mandelbrot
                     {
                         mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
                     }
+
+
+                    //mandelbrot.SetPixel(x, y, Color.FromArgb(0, 250/((n%5)+1), 0));
+                    //mandelbrot.SetPixel(x, y, Color.FromArgb(250/((n%5)+1), 0, 0));
+                    //mandelbrot.SetPixel(x, y, Color.FromArgb(246 / ((n % 3) + 1), 246 / ((n % 3) + 1), 246));
+                    //mandelbrot.SetPixel(x, y, Color.FromArgb(250, n % 2 * 255, 250 / ((n % 5) + 1)));
+                    /*
+                    if (n % 3 == 1)
+                        mandelbrot.SetPixel(x, y, Color.Green);
+                    else if (n % 3 == 2)
+                        mandelbrot.SetPixel(x, y, Color.Red);
+                    else
+                        mandelbrot.SetPixel(x, y, Color.Yellow);
+                    */
+                    else if (selectedIndex == 4)
+                    {
+                        if (n % 8 == 1)
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 0, 0));
+                        else if (n % 8 == 2)
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 127, 0));
+                        else if (n % 8 == 3)
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 0));
+                        else if (n % 8 == 4)
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(0, 255, 0));
+                        else if (n % 8 == 5)
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(0, 0, 255));
+                        else if (n % 8 == 6)
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(75, 0, 130));
+                        else if (n % 8 == 7)
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(143, 0, 255));
+                        else
+                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 255));
+                    }
                 }
             }
 
