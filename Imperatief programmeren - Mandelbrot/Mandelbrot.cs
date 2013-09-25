@@ -21,14 +21,22 @@ namespace Mandelbrot
 
             mandelbrot = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             DrawMandelbrot();
-            pictureBox1.MouseClick += new MouseEventHandler(SetCenterPoint);
+            pictureBox1.MouseClick += new MouseEventHandler(Zoom);
         }
 
-        private void SetCenterPoint(object sender, MouseEventArgs e)
+        private void Zoom(object sender, MouseEventArgs e)
         {
             textBox1.Text = (this.LeftTopX + e.X * this.scale).ToString();
             textBox2.Text = (this.LeftTopY + e.Y * this.scale).ToString();
-            textBox3.Text = (this.scale / 2).ToString();
+            
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                textBox3.Text = (this.scale / 2).ToString();
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                textBox3.Text = (this.scale * 2).ToString();
+            }
             DrawMandelbrot();
         }
 
