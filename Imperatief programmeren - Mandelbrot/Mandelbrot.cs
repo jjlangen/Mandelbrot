@@ -13,6 +13,7 @@ namespace Mandelbrot
         double scale;
         double LeftTopX;
         double LeftTopY;
+        int max;
 
         // Constructor
         public Mandelbrot() 
@@ -50,6 +51,7 @@ namespace Mandelbrot
             this.scale = Convert.ToDouble(textBox3.Text);
             this.LeftTopX = CenterX - (pictureBox1.Width / 2 * scale);
             this.LeftTopY = CenterY - (pictureBox1.Height / 2 * scale);
+            this.max = Convert.ToInt32(textBox4.Text);
 
             // For every x and y run the mandelbrot calculation
             for (int x = 0; x < pictureBox1.Width; x++)
@@ -65,11 +67,9 @@ namespace Mandelbrot
             pictureBox1.Image = mandelbrot;
         }
 
-        
-
         // Method that calculates the Mandelnumber for a given x and y using 
         // the Mandelbrot algorithm
-        private static int CalculateMandelNumber(double x, double y)
+        private int CalculateMandelNumber(double x, double y)
         {
             double a, b, ra, rb;
             int result;
@@ -79,7 +79,7 @@ namespace Mandelbrot
 
             while (DistanceToOrigin(a, b) < 2.0)
             {
-                if (result == 100)
+                if (result == this.max)
                 {
                     break;
                 }

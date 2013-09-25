@@ -111,6 +111,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(95, 22);
             this.textBox4.TabIndex = 7;
+            this.textBox4.Text = "200";
             // 
             // button1
             // 
