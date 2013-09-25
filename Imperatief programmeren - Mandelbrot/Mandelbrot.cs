@@ -8,35 +8,47 @@ namespace Mandelbrot
     {
         // Declaration of the globals
         Bitmap mandelbrot;
+        double CenterX;
+        double CenterY;
+        double scale;
+        double LeftTopX;
+        double LeftTopY;
 
         // Constructor
         public Mandelbrot() 
         {
             InitializeComponent();
+
             mandelbrot = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             DrawMandelbrot();
+            pictureBox1.MouseClick += new MouseEventHandler(SetCenterPoint);
+        }
 
+        private void SetCenterPoint(object sender, MouseEventArgs e)
+        {
+            textBox1.Text = (this.LeftTopX + e.X * this.scale).ToString();
+            textBox2.Text = (this.LeftTopY + e.Y * this.scale).ToString();
+            textBox3.Text = (this.scale / 2).ToString();
+            DrawMandelbrot();
         }
 
         // Calculate and draw the mandelbrot figure
         private void DrawMandelbrot()
         {
             int n;
-            double scale;
-            scale = 0.004;
 
-            double CenterX = Convert.ToDouble(textBox1.Text);
-            double CenterY = Convert.ToDouble(textBox2.Text);
-
-            double LeftTopX = CenterX - (pictureBox1.Width / 2 * scale);
-            double LeftTopY = CenterY - (pictureBox1.Height / 2 * scale);
+            this.CenterX = Convert.ToDouble(textBox1.Text);
+            this.CenterY = Convert.ToDouble(textBox2.Text);
+            this.scale = Convert.ToDouble(textBox3.Text);
+            this.LeftTopX = CenterX - (pictureBox1.Width / 2 * scale);
+            this.LeftTopY = CenterY - (pictureBox1.Height / 2 * scale);
 
             // For every x and y run the mandelbrot calculation
             for (int x = 0; x < pictureBox1.Width; x++)
             {
                 for (int y = 0; y < pictureBox1.Height; y++)
                 {
-                    n = CalculateMandelNumber(LeftTopX + x * scale, LeftTopY + y * scale);
+                    n = CalculateMandelNumber(this.LeftTopX + x * this.scale, this.LeftTopY + y * this.scale);
                     mandelbrot.SetPixel(x, y, (n % 2 == 0) ? 
                         Color.White : Color.Black);
                 }
@@ -44,6 +56,8 @@ namespace Mandelbrot
 
             pictureBox1.Image = mandelbrot;
         }
+
+        
 
         // Method that calculates the Mandelnumber for a given x and y using 
         // the Mandelbrot algorithm
