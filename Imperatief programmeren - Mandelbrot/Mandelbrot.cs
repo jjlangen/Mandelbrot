@@ -4,6 +4,7 @@ using System.Windows.Forms;
 
 // needed for circumventing XP - SAPI interaction bug 
 using System.Threading;
+using System.Reflection;
 
 // additionally needed libraries
 using System.Speech.Synthesis;
@@ -45,43 +46,54 @@ namespace Mandelbrot
 
         private void SpeechRecognition()
         {
-            string[] words = new string[] { "zoom in", "zoom out" };
-            // start new thread to control for XP - SAPI bug
-            Thread t1 = new Thread(delegate()
+            string[] words = new string[] { "left", "right", "top", "bottom", "zoom in", "zoom out" };
+            
+            foreach (string s in words)
             {
-                // call methods of SpeechRecognitionEngine object here
-                foreach (string s in words)
-                {
-                    recognitionEngine.RequestRecognizerUpdate();
-                    recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(s)));
-                }
-                recognitionEngine.SpeechRecognized += recognitionEngine_SpeechRecognized;
-                recognitionEngine.SetInputToDefaultAudioDevice();
-                recognitionEngine.RecognizeAsync(RecognizeMode.Multiple);
-            });
+                recognitionEngine.RequestRecognizerUpdate();
+                recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(s)));
+            }
 
-            // set right state for thread and start
-            t1.SetApartmentState(ApartmentState.MTA);
-            t1.Start();
+            recognitionEngine.SpeechRecognized += recognitionEngine_SpeechRecognized;
+            recognitionEngine.SetInputToDefaultAudioDevice();
+            recognitionEngine.RecognizeAsync(RecognizeMode.Multiple);
         }
 
         void recognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            String word = e.Result.Text;
-            if (e.Result.Text == "zoom in")
+            textBox5.Text = e.Result.Text;
+
+            if (e.Result.Text == "left")
             {
-                this.scale = this.scale / 2;
-                DrawMandelbrot();
+                centerX = centerX - (125 * scale);
+            }
+            else if (e.Result.Text == "right")
+            {
+                centerX = centerX + (125 * scale);
+            }
+            if (e.Result.Text == "top")
+            {
+                centerY = centerY - (125 * scale);
+            }
+            else if (e.Result.Text == "bottom")
+            {
+                centerY = centerY + (125 * scale);
+            }
+            else if (e.Result.Text == "zoom in")
+            {
+                scale = scale / 2;
             }
             else if (e.Result.Text == "zoom out")
             {
-                this.scale = this.scale * 2;
-               DrawMandelbrot();
+                scale = scale * 2;
             }
+
+            SetFormValues();
+            DrawMandelbrot();
         }
 
         // Calculate and draw the mandelbrot figure
-        private void DrawMandelbrot()
+        public void DrawMandelbrot()
         {
             int n;
             int selectedIndex = comboBox2.SelectedIndex;
