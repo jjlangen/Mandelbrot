@@ -128,6 +128,37 @@ namespace Mandelbrot
             textBox4.Text = this.max.ToString();
         }
 
+        private void SetFormValues(double centerX, double centerY, double scale)
+        {
+            textBox1.Text = centerX.ToString();
+            textBox2.Text = centerY.ToString();
+            textBox3.Text = scale.ToString();
+            textBox4.Text = max.ToString();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           int selectedIndex = comboBox1.SelectedIndex;
+           if (selectedIndex == 0)
+           {
+               SetFormValues(-0.2, 0, 0.006);
+           }
+           else if (selectedIndex == 1)
+           {
+               SetFormValues(0.3634638671875, -0.589392578125, 1.708984375E-06);
+           }
+           else if (selectedIndex == 2)
+           {
+               SetFormValues(-1.76391357421875, 0.0282250976562505, 2.44140625E-06);
+           }
+           else if (selectedIndex == 3)
+           {
+               SetFormValues(-0.74984375, 0.0048437499999997, 0.000625);
+           }
+           GetFormValues();
+           DrawMandelbrot();
+        }
+
         
     }
 }
