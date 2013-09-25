@@ -61,21 +61,23 @@ namespace Mandelbrot
 
         void recognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
+            textBox5.Text = e.Result.Text;
+
             if (e.Result.Text == "left")
             {
-                centerX = centerX - (100 * scale);
+                centerX = centerX - (125 * scale);
             }
             else if (e.Result.Text == "right")
             {
-                centerX = centerX + (100 * scale);
+                centerX = centerX + (125 * scale);
             }
             if (e.Result.Text == "top")
             {
-                centerY = centerY - (100 * scale);
+                centerY = centerY - (125 * scale);
             }
             else if (e.Result.Text == "bottom")
             {
-                centerY = centerY + (100 * scale);
+                centerY = centerY + (125 * scale);
             }
             else if (e.Result.Text == "zoom in")
             {
