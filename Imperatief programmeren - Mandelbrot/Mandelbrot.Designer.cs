@@ -147,7 +147,8 @@
             "Pillars",
             "Crystal",
             "Infinity",
-            "Plus"});
+            "Cross",
+            "Tulips"});
             this.comboBox1.Location = new System.Drawing.Point(405, 6);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox1.Name = "comboBox1";

@@ -232,6 +232,8 @@ namespace Mandelbrot
                 ChangeSettings(-1.26814331054687, 0.414217453002929, 1.52587890625E-07, 250);
             else if (selectedIndex == 4)
                 ChangeSettings(-1.98165582847596, 2.53677368206578E-07, 2.53677368206578E-07, 200);
+            else if (selectedIndex == 5)
+                ChangeSettings(-1.98165634573997, 1.0424554349739E-06, 4.95463609778473E-10, 150);
             SetFormValues();
             LoopPictureBox();
         }
