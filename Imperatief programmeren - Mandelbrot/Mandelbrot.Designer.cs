@@ -150,7 +150,8 @@
             "Start",
             "Pillars",
             "Crystal",
-            "Infinity"});
+            "Infinity",
+            "Plus"});
             this.comboBox1.Location = new System.Drawing.Point(304, 5);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox1.Name = "comboBox1";
