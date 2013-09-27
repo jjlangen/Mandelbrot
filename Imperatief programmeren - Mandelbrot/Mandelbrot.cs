@@ -10,7 +10,7 @@ namespace Mandelbrot
 
         // Declaration of the globals
         SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
-        Bitmap mandelbrot = new Bitmap(375, 406);
+        Bitmap mandelbrot = new Bitmap(500, 500);
         double centerX,  centerY;
         double leftTopX, leftTopY;
         double scale;
@@ -54,12 +54,12 @@ namespace Mandelbrot
             leftTopY = centerY - (pictureBox1.Height / 2 * scale);
 
             // For every x and y run the mandelbrot calculation
-            for (int x = 0; x < pictureBox1.Width; x++)
+            for (int x = 0; x < mandelbrot.Width; x++)
             {
-                for (int y = 0; y < pictureBox1.Height; y++)
+                for (int y = 0; y < mandelbrot.Height; y++)
                 {
                     n = CalculateMandelNumber(leftTopX + x * scale, leftTopY + y * scale);
-                    DrawMandelbrot(x, y, n, comboBox2.SelectedIndex);
+                    DrawMandelbrot(x, y, n, selectedIndex);
                 }
             }
 
@@ -70,47 +70,47 @@ namespace Mandelbrot
         private void DrawMandelbrot(int x, int y, int n, int userChoice)
         {
             // Pastel colors
-            if      (userChoice == 0)
-                    mandelbrot.SetPixel(x, y, Color.FromArgb(255 / ((n % 3) + 1), 255 / ((n % 3) + 1), 255));
+            if (userChoice == 0)
+                mandelbrot.SetPixel(x, y, Color.FromArgb(255 / ((n % 3) + 1), 255 / ((n % 3) + 1), 255));
             // Candyland colors
             else if (userChoice == 1)
-                    mandelbrot.SetPixel(x, y, Color.FromArgb(250, n % 2 * 255, 250 / ((n % 5) + 1)));
+                mandelbrot.SetPixel(x, y, Color.FromArgb(250, n % 2 * 255, 250 / ((n % 5) + 1)));
             // Lion colors
             else if (userChoice == 2)
-                    mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255 / ((n % 4) + 1), 0));
+                mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255 / ((n % 4) + 1), 0));
             // Checkmate colors
             else if (userChoice == 3)
-                    mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
+                mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
             // Rastafari colors
             else if (userChoice == 4)
             {
-                    if      (n % 3 == 1)
-                            mandelbrot.SetPixel(x, y, Color.Red);
-                    else if (n % 3 == 2)
-                            mandelbrot.SetPixel(x, y, Color.Green);
-                    else
-                            mandelbrot.SetPixel(x, y, Color.Yellow);
+                if (n % 3 == 1)
+                    mandelbrot.SetPixel(x, y, Color.Red);
+                else if (n % 3 == 2)
+                    mandelbrot.SetPixel(x, y, Color.Green);
+                else
+                    mandelbrot.SetPixel(x, y, Color.Yellow);
             }
             // Rainbow colors
             else if (userChoice == 5)
             {
 
-                    if      (n % 8 == 1)
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 0, 0));
-                    else if (n % 8 == 2)
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 127, 0));
-                    else if (n % 8 == 3)
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 0));
-                    else if (n % 8 == 4)
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(0, 255, 0));
-                    else if (n % 8 == 5)
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(0, 0, 255));
-                    else if (n % 8 == 6)
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(75, 0, 130));
-                    else if (n % 8 == 7)
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(143, 0, 255));
-                    else
-                            mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 255));
+                if (n % 8 == 1)
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(255, 0, 0));
+                else if (n % 8 == 2)
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(255, 127, 0));
+                else if (n % 8 == 3)
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 0));
+                else if (n % 8 == 4)
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(0, 255, 0));
+                else if (n % 8 == 5)
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(0, 0, 255));
+                else if (n % 8 == 6)
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(75, 0, 130));
+                else if (n % 8 == 7)
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(143, 0, 255));
+                else
+                    mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 255));
             }
         }
 
