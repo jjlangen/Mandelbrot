@@ -21,7 +21,7 @@ namespace Mandelbrot
         {
             InitializeComponent();
             GetFormValues();
-            LoopPictureBox();
+            PaintPicture();
 
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 0;
@@ -45,7 +45,7 @@ namespace Mandelbrot
         }
 
         // Loop through all pixels in the picturebox
-        public void LoopPictureBox()
+        public void PaintPicture()
         {
             int n;
             int selectedIndex = comboBox2.SelectedIndex;
@@ -194,7 +194,7 @@ namespace Mandelbrot
 
             textBox5.Text = srea.Result.Text;
             SetFormValues();
-            LoopPictureBox();
+            PaintPicture();
         }
 
 
@@ -209,13 +209,13 @@ namespace Mandelbrot
                 this.scale = this.scale * 2;
 
             SetFormValues();
-            LoopPictureBox();
+            PaintPicture();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             GetFormValues();
-            LoopPictureBox();
+            PaintPicture();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -235,12 +235,12 @@ namespace Mandelbrot
             else if (selectedIndex == 5)
                 ChangeSettings(-1.98165634573997, 1.0424554349739E-06, 4.95463609778473E-10, 150);
             SetFormValues();
-            LoopPictureBox();
+            PaintPicture();
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoopPictureBox();
+            PaintPicture();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
