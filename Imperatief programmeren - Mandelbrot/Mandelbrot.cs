@@ -16,20 +16,42 @@ namespace Mandelbrot
         double scale;
         int max;
 
-        // Class Constructor
+        // Mandelbrot Class Constructor
         public Mandelbrot()
         {
             InitializeComponent();
-            GetFormValues();
-            PaintPicture();
+            getFormValues();
+            paintPicture();
 
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 0;
-            pictureBox1.MouseClick += Zoom;
+            pictureBox1.MouseClick += zoom;
+        }
+
+        // Loop through all pixels in the picturebox
+        private void paintPicture()
+        {
+            int mandelNumber;
+            int selectedColorSet = comboBox2.SelectedIndex;
+
+            leftTopX = centerX - (pictureBox1.Width / 2 * scale);
+            leftTopY = centerY - (pictureBox1.Height / 2 * scale);
+
+            // For every individual pixel in the picturebox run the mandelbrot calculation
+            for (int x = 0; x < pictureBox1.Width; x++)
+            {
+                for (int y = 0; y < pictureBox1.Height; y++)
+                {
+                    mandelNumber = calculateMandelNumber(leftTopX + x * scale, leftTopY + y * scale);
+                    drawMandelbrot(x, y, mandelNumber, selectedColorSet);
+                }
+            }
+
+            pictureBox1.Image = mandelbrot;
         }
 
         // Speech based commands
-        private void InitializeSpeechRecognition()
+        private void initializeSpeechRecognition()
         {
             string[] words = new string[] { "left", "right", "top", "bottom", "zoom in", "zoom out" };
             
@@ -44,70 +66,48 @@ namespace Mandelbrot
             recognitionEngine.RecognizeAsync(RecognizeMode.Multiple);
         }
 
-        // Loop through all pixels in the picturebox
-        public void PaintPicture()
-        {
-            int n;
-            int selectedIndex = comboBox2.SelectedIndex;
-
-            leftTopX = centerX - (pictureBox1.Width / 2 * scale);
-            leftTopY = centerY - (pictureBox1.Height / 2 * scale);
-
-            // For every x and y run the mandelbrot calculation
-            for (int x = 0; x < mandelbrot.Width; x++)
-            {
-                for (int y = 0; y < mandelbrot.Height; y++)
-                {
-                    n = CalculateMandelNumber(leftTopX + x * scale, leftTopY + y * scale);
-                    DrawMandelbrot(x, y, n, selectedIndex);
-                }
-            }
-
-            pictureBox1.Image = mandelbrot;
-        }
-
         // Draw the mandelbrot figure
-        private void DrawMandelbrot(int x, int y, int n, int userChoice)
+        private void drawMandelbrot(int x, int y, int mandelNumber, int selectedColorSet)
         {
             // Pastel colors
-            if (userChoice == 0)
-                mandelbrot.SetPixel(x, y, Color.FromArgb(255 / ((n % 3) + 1), 255 / ((n % 3) + 1), 255));
+            if (selectedColorSet == 0)
+                mandelbrot.SetPixel(x, y, Color.FromArgb(255 / ((mandelNumber % 3) + 1), 255 / ((mandelNumber % 3) + 1), 255));
             // Candyland colors
-            else if (userChoice == 1)
-                mandelbrot.SetPixel(x, y, Color.FromArgb(250, n % 2 * 255, 250 / ((n % 5) + 1)));
+            else if (selectedColorSet == 1)
+                mandelbrot.SetPixel(x, y, Color.FromArgb(250, mandelNumber % 2 * 255, 250 / ((mandelNumber % 5) + 1)));
             // Lion colors
-            else if (userChoice == 2)
-                mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255 / ((n % 4) + 1), 0));
+            else if (selectedColorSet == 2)
+                mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255 / ((mandelNumber % 4) + 1), 0));
             // Checkmate colors
-            else if (userChoice == 3)
-                mandelbrot.SetPixel(x, y, (n % 2 == 0) ? Color.White : Color.Black);
+            else if (selectedColorSet == 3)
+                mandelbrot.SetPixel(x, y, (mandelNumber % 2 == 0) ? Color.White : Color.Black);
             // Rastafari colors
-            else if (userChoice == 4)
+            else if (selectedColorSet == 4)
             {
-                if (n % 3 == 1)
+                if (mandelNumber % 3 == 1)
                     mandelbrot.SetPixel(x, y, Color.Red);
-                else if (n % 3 == 2)
+                else if (mandelNumber % 3 == 2)
                     mandelbrot.SetPixel(x, y, Color.Green);
                 else
                     mandelbrot.SetPixel(x, y, Color.Yellow);
             }
             // Rainbow colors
-            else if (userChoice == 5)
+            else if (selectedColorSet == 5)
             {
 
-                if (n % 8 == 1)
+                if (mandelNumber % 8 == 1)
                     mandelbrot.SetPixel(x, y, Color.FromArgb(255, 0, 0));
-                else if (n % 8 == 2)
+                else if (mandelNumber % 8 == 2)
                     mandelbrot.SetPixel(x, y, Color.FromArgb(255, 127, 0));
-                else if (n % 8 == 3)
+                else if (mandelNumber % 8 == 3)
                     mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 0));
-                else if (n % 8 == 4)
+                else if (mandelNumber % 8 == 4)
                     mandelbrot.SetPixel(x, y, Color.FromArgb(0, 255, 0));
-                else if (n % 8 == 5)
+                else if (mandelNumber % 8 == 5)
                     mandelbrot.SetPixel(x, y, Color.FromArgb(0, 0, 255));
-                else if (n % 8 == 6)
+                else if (mandelNumber % 8 == 6)
                     mandelbrot.SetPixel(x, y, Color.FromArgb(75, 0, 130));
-                else if (n % 8 == 7)
+                else if (mandelNumber % 8 == 7)
                     mandelbrot.SetPixel(x, y, Color.FromArgb(143, 0, 255));
                 else
                     mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255, 255));
@@ -116,7 +116,7 @@ namespace Mandelbrot
 
         // Method that calculates the Mandelnumber for a given x and y using 
         // the Mandelbrot algorithm
-        private int CalculateMandelNumber(double x, double y)
+        private int calculateMandelNumber(double x, double y)
         {
             double a, b, ra, rb;
             int result;
@@ -124,7 +124,7 @@ namespace Mandelbrot
             b = 0;
             result = 0;
 
-            while (DistanceToOrigin(a, b) < 2.0)
+            while (distanceToOrigin(a, b) < 2.0)
             {
                 if (result == this.max)
                     break;
@@ -143,12 +143,12 @@ namespace Mandelbrot
 
         // Calculate the shortest distance from point (x, y) to point (0, 0)
         // using Pythagoras
-        private static double DistanceToOrigin(double x, double y)
+        private static double distanceToOrigin(double x, double y)
         {
             return Math.Sqrt(x * x + y * y);
         }
 
-        private void GetFormValues()
+        private void getFormValues()
         {
             this.centerX = Convert.ToDouble(textBox1.Text);
             this.centerY = Convert.ToDouble(textBox2.Text);
@@ -156,7 +156,7 @@ namespace Mandelbrot
             this.max = Convert.ToInt32(textBox4.Text);
         }
 
-        private void SetFormValues()
+        private void setFormValues()
         {
             textBox1.Text = this.centerX.ToString();
             textBox2.Text = this.centerY.ToString();
@@ -164,7 +164,7 @@ namespace Mandelbrot
             textBox4.Text = this.max.ToString();
         }
 
-        private void ChangeSettings(double centerX, double centerY, double scale, int max)
+        private void changeSettings(double centerX, double centerY, double scale, int max)
         {
             this.centerX = centerX;
             this.centerY = centerY;
@@ -193,12 +193,11 @@ namespace Mandelbrot
                 scale *= 2;
 
             textBox5.Text = srea.Result.Text;
-            SetFormValues();
-            PaintPicture();
+            setFormValues();
+            paintPicture();
         }
 
-
-        private void Zoom(object sender, MouseEventArgs mea)
+        private void zoom(object sender, MouseEventArgs mea)
         {
             this.centerX = this.leftTopX + mea.X * this.scale;
             this.centerY = this.leftTopY + mea.Y * this.scale;
@@ -208,14 +207,14 @@ namespace Mandelbrot
             else if (mea.Button == MouseButtons.Right)
                 this.scale = this.scale * 2;
 
-            SetFormValues();
-            PaintPicture();
+            setFormValues();
+            paintPicture();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            GetFormValues();
-            PaintPicture();
+            getFormValues();
+            paintPicture();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -223,31 +222,31 @@ namespace Mandelbrot
             int selectedIndex = comboBox1.SelectedIndex;
 
             if (selectedIndex == 0)
-                ChangeSettings(-0.6, 0, 0.007, 200);
+                changeSettings(-0.6, 0, 0.007, 200);
             else if (selectedIndex == 1)
-                ChangeSettings(0.3634638671875, -0.589392578125, 1.708984375E-06, 295);
+                changeSettings(0.3634638671875, -0.589392578125, 1.708984375E-06, 295);
             else if (selectedIndex == 2)
-                ChangeSettings(-1.76391357421875, 0.0282250976562505, 2.44140625E-06, 400);
+                changeSettings(-1.76391357421875, 0.0282250976562505, 2.44140625E-06, 400);
             else if (selectedIndex == 3)
-                ChangeSettings(-1.26814331054687, 0.414217453002929, 1.52587890625E-07, 250);
+                changeSettings(-1.26814331054687, 0.414217453002929, 1.52587890625E-07, 250);
             else if (selectedIndex == 4)
-                ChangeSettings(-1.98165582847596, 2.53677368206578E-07, 2.53677368206578E-07, 200);
+                changeSettings(-1.98165582847596, 2.53677368206578E-07, 2.53677368206578E-07, 200);
             else if (selectedIndex == 5)
-                ChangeSettings(-1.98165634573997, 1.0424554349739E-06, 4.95463609778473E-10, 150);
-            SetFormValues();
-            PaintPicture();
+                changeSettings(-1.98165634573997, 1.0424554349739E-06, 4.95463609778473E-10, 150);
+            setFormValues();
+            paintPicture();
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PaintPicture();
+            paintPicture();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
             {
-                InitializeSpeechRecognition();
+                initializeSpeechRecognition();
                 MessageBox.Show("The following voice commands are supported: \ntop, bottom, left, right, zoom in, zoom out.",
                     "Voice control activated", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
