@@ -33,20 +33,24 @@ namespace Mandelbrot
         {
             int mandelNumber;
             int selectedColorSet = comboBox2.SelectedIndex;
+            int imageWidth = pictureBox1.Width;
+            int imageHeight = pictureBox1.Height;
 
-            leftTopX = centerX - (pictureBox1.Width / 2 * scale);
-            leftTopY = centerY - (pictureBox1.Height / 2 * scale);
+            leftTopX = centerX - (imageWidth / 2 * scale);
+            leftTopY = centerY - (imageHeight / 2 * scale);
 
-            // For every individual pixel in the picturebox run the mandelbrot calculation
-            for (int x = 0; x < pictureBox1.Width; x++)
+            // For every individual pixel in the picturebox calculate the mandelbrot
+            // number and draw it in the mandelbrot Bitmap
+            for (int x = 0; x < imageWidth; x++)
             {
-                for (int y = 0; y < pictureBox1.Height; y++)
+                for (int y = 0; y < imageHeight; y++)
                 {
                     mandelNumber = calculateMandelNumber(leftTopX + x * scale, leftTopY + y * scale);
                     drawMandelbrot(x, y, mandelNumber, selectedColorSet);
                 }
             }
 
+            // Show the mandelbrot Bitmap in the Picturebox
             pictureBox1.Image = mandelbrot;
         }
 
@@ -71,16 +75,20 @@ namespace Mandelbrot
         {
             // Pastel colors
             if (selectedColorSet == 0)
-                mandelbrot.SetPixel(x, y, Color.FromArgb(255 / ((mandelNumber % 3) + 1), 255 / ((mandelNumber % 3) + 1), 255));
+                mandelbrot.SetPixel(x, y, 
+                    Color.FromArgb(255 / ((mandelNumber % 3) + 1), 255 / ((mandelNumber % 3) + 1), 255));
             // Candyland colors
             else if (selectedColorSet == 1)
-                mandelbrot.SetPixel(x, y, Color.FromArgb(250, mandelNumber % 2 * 255, 250 / ((mandelNumber % 5) + 1)));
+                mandelbrot.SetPixel(x, y, 
+                    Color.FromArgb(250, mandelNumber % 2 * 255, 250 / ((mandelNumber % 5) + 1)));
             // Lion colors
             else if (selectedColorSet == 2)
-                mandelbrot.SetPixel(x, y, Color.FromArgb(255, 255 / ((mandelNumber % 4) + 1), 0));
+                mandelbrot.SetPixel(x, y, 
+                    Color.FromArgb(255, 255 / ((mandelNumber % 4) + 1), 0));
             // Checkmate colors
             else if (selectedColorSet == 3)
-                mandelbrot.SetPixel(x, y, (mandelNumber % 2 == 0) ? Color.White : Color.Black);
+                mandelbrot.SetPixel(x, y, 
+                    (mandelNumber % 2 == 0) ? Color.White : Color.Black);
             // Rastafari colors
             else if (selectedColorSet == 4)
             {
@@ -114,7 +122,7 @@ namespace Mandelbrot
             }
         }
 
-        // Method that calculates the Mandelnumber for a given x and y using 
+        // Method that calculates the mandelnumber for a given x and y using 
         // the Mandelbrot algorithm
         private int calculateMandelNumber(double x, double y)
         {
@@ -126,7 +134,7 @@ namespace Mandelbrot
 
             while (distanceToOrigin(a, b) < 2.0)
             {
-                if (result == this.max)
+                if (result == max)
                     break;
 
                 // The Mandelbrot algorithm
@@ -150,18 +158,18 @@ namespace Mandelbrot
 
         private void getFormValues()
         {
-            this.centerX = Convert.ToDouble(textBox1.Text);
-            this.centerY = Convert.ToDouble(textBox2.Text);
-            this.scale = Convert.ToDouble(textBox3.Text);
-            this.max = Convert.ToInt32(textBox4.Text);
+            centerX = Convert.ToDouble(textBox1.Text);
+            centerY = Convert.ToDouble(textBox2.Text);
+            scale   = Convert.ToDouble(textBox3.Text);
+            max     = Convert.ToInt32 (textBox4.Text);
         }
 
         private void setFormValues()
         {
-            textBox1.Text = this.centerX.ToString();
-            textBox2.Text = this.centerY.ToString();
-            textBox3.Text = this.scale.ToString();
-            textBox4.Text = this.max.ToString();
+            textBox1.Text = centerX.ToString();
+            textBox2.Text = centerY.ToString();
+            textBox3.Text = scale.ToString();
+            textBox4.Text = max.ToString();
         }
 
         private void changeSettings(double centerX, double centerY, double scale, int max)
@@ -192,7 +200,7 @@ namespace Mandelbrot
             else if (command == "zoom out")
                 scale *= 2;
 
-            textBox5.Text = srea.Result.Text;
+            textBox5.Text = command;
             setFormValues();
             paintPicture();
         }
